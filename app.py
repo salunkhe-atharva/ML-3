@@ -2,14 +2,25 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pathlib import Path
+import os
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 def train_and_evaluate():
-    # Load and preprocess
-    df = pd.read_csv("imdb_dataset.csv")
+    # 1. Define the correct path
+    current_dir = Path(__file__).parent
+    data_path = current_dir / "imdb_dataset.csv"
+
+    # 2. Safety Check: If file is missing, list all files to help you debug
+    if not data_path.exists():
+        files_found = os.listdir(current_dir)
+        raise FileNotFoundError(f"Could not find {data_path.name}. Files in directory: {files_found}")
+
+    # 3. Load and preprocess
+    df = pd.read_csv(data_path)
     df['sentiment'] = df['sentiment'].map({'positive': 1, 'negative': 0})
     
     X = df['review']
@@ -46,20 +57,8 @@ def train_and_evaluate():
     plt.ylabel("Actual")
     plt.title("Confusion Matrix")
     plt.savefig('confusion_matrix.png')
-    plt.show()
+    plt.close() # Close plot to save memory on server
 
     return nb_model, tfidf
 
-def predict_sentiment(review, model, tfidf):
-    review_tfidf = tfidf.transform([review])
-    prediction = model.predict(review_tfidf)
-    return "Positive" if prediction[0] == 1 else "Negative"
-
-if __name__ == "__main__":
-    model, tfidf_vectorizer = train_and_evaluate()
-    
-    # Test prediction
-    sample_text = "The movie was boring and a complete waste of time"
-    result = predict_sentiment(sample_text, model, tfidf_vectorizer)
-    print(f"\nReview: {sample_text}")
-    print(f"Sentiment: {result}")
+# Keep your predict_sentiment and __main__ blocks as they were
