@@ -10,7 +10,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 
-# --- UI Header ---
 st.title("🎬 IMDB Sentiment Analyzer")
 st.write("Loading model, please wait...")
 
@@ -41,11 +40,9 @@ def train_and_evaluate():
     
     return nb_model, tfidf
 
-# Load data/model
 model, tfidf_vectorizer = train_and_evaluate()
 st.success("Model ready!")
 
-# --- User Interaction Section ---
 user_input = st.text_area("Enter a movie review:", "This movie was fantastic!")
 
 if st.button("Predict Sentiment"):
